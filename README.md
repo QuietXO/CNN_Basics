@@ -1,2 +1,3 @@
 # CNN
 Just a test run...
+Although, you will find PyTorch Basics in the folder above
