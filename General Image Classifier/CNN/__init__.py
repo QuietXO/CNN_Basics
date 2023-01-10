@@ -2,6 +2,7 @@ __all__ = ['dataset', 'model', 'visual']
 
 from .dataset import create_csv
 from .dataset import get_normal
+from .dataset import trans_normal
 from .dataset import CustomDataset
 
 from .model import train_model

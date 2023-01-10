@@ -86,18 +86,20 @@ def create_csv(file_path, csv_path=None, train_csv=None, test_csv=None,
     return translate
 
 
-def get_normal(file_path, img_h, img_w, colour='grayscale'):
+def get_normal(file_path, img_h, img_w, colour_size=1, grayscale=True, batch_size=5000):
     """
     Get the mean & std for you image dataset
     :param file_path: Sub-Folders location path (e.g. './dataset')
     :param img_h: Image height
     :param img_w: Image width
-    :param colour: Colour type of dataset ('grayscale' by default)
+    :param colour_size: Size of the dataset colour (1 by default)
+    :param grayscale: Grayscale transformation (True by default)
+    :param batch_size: Loader batch_size (5000 by default)
     :return: [mean, std]
     """
 
     # Base Transformation
-    if colour == 'grayscale':
+    if grayscale:
         transformer = torchvision.transforms.Compose([
             torchvision.transforms.ToTensor(),
             torchvision.transforms.Resize((img_h, img_w)),
@@ -118,39 +120,51 @@ def get_normal(file_path, img_h, img_w, colour='grayscale'):
     os.remove(csv_path)
 
     # Get mean & std
-    loader = DataLoader(dataset=dataset, batch_size=1)
+    loader = DataLoader(dataset=dataset, batch_size=batch_size)
     n_pixels = len(dataset) * img_h * img_w
 
     total_sum = 0
     for image in loader:
         total_sum += image[0].sum()
-    mean = total_sum / n_pixels
+    mean = (total_sum / n_pixels) / colour_size
 
     mse_sum = 0
     for image in loader:
         mse_sum += ((image[0] - mean).pow(2)).sum()
-    std = torch.sqrt(mse_sum / n_pixels)
+    std = torch.sqrt((mse_sum / n_pixels) / colour_size)
 
     return [mean, std]
 
 
-def trans_normal(img_h, img_w, mean, std):
+def trans_normal(img_h, img_w, mean, std, grayscale=True):
     """
     Get a normalised transformation
     :param img_h: Image height
     :param img_w: Image width
     :param mean: Mean of the dataset images
     :param std: Std of the dataset images
+    :param grayscale: Grayscale transformation (True by default)
     :return: normalised transformation
     """
-    transformer = torchvision.transforms.Compose([
-        torchvision.transforms.ToTensor(),
-        torchvision.transforms.Resize((img_h, img_w)),
-        torchvision.transforms.RandomHorizontalFlip(),
-        torchvision.transforms.RandomVerticalFlip(),
-        torchvision.transforms.Grayscale(),
-        torchvision.transforms.Normalize(mean, std)
-    ])
+
+    if grayscale:
+        transformer = torchvision.transforms.Compose([
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Resize((img_h, img_w)),
+            torchvision.transforms.RandomHorizontalFlip(),
+            torchvision.transforms.RandomVerticalFlip(),
+            torchvision.transforms.Grayscale(),
+            torchvision.transforms.Normalize(mean, std)
+        ])
+    else:
+        transformer = torchvision.transforms.Compose([
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Resize((img_h, img_w)),
+            torchvision.transforms.RandomHorizontalFlip(),
+            torchvision.transforms.RandomVerticalFlip(),
+            torchvision.transforms.Normalize(mean, std)
+        ])
+
     return transformer
 
 
