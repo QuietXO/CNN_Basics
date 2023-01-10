@@ -9,8 +9,11 @@ from torch.utils.data import DataLoader
 
 
 def imshow(img):
-    """Show a batch of images:\n
-      - img: Image iteration from DataLoader"""
+    """
+    Show a batch of images
+    :param img: Image iteration from DataLoader
+    :return: None
+    """
 
     img = torchvision.utils.make_grid(img)
     img = img / 2 + 0.5  # un-normalize
@@ -20,8 +23,11 @@ def imshow(img):
 
 
 def data_distribution(dataset):
-    """Create the data distribution in a dataset:\n
-      - dataset: Dataset to analyse"""
+    """
+    Creates a dictionary of data distribution in the given dataset
+    :param dataset: Dataset to analyse
+    :return: dictionary ( class index : number of samples )
+    """
 
     dct = dict()
     for item in dataset:
@@ -33,19 +39,25 @@ def data_distribution(dataset):
 
 
 def print_data_distribution(dataset, translate):
-    """Print the data distribution in a dataset:\n
-      - dataset: Dataset to analyse
-      - translate: Dict of class indexing (Hint: usually an output of the create_csv function)"""
+    """
+    Prints the data distribution in the given dataset
+    :param dataset: Dataset to analyse
+    :param translate: Dict of class indexing (Hint: usually an output of the create_csv function)
+    :return: None
+    """
 
     for key, value in data_distribution(dataset).items():
         print(f'{translate[key]}: {value}')
 
 
 def data_distribution_table(train_data, test_data, translate):
-    """Show the data distribution of dataset in a Pandas table:\n
-      - train_data: Dataset used for training the model
-      - test_data: Dataset used for testing the model
-      - translate: Dict of class indexing (Hint: usually an output of the create_csv function)"""
+    """
+    Show the data distribution of dataset in a Pandas table
+    :param train_data: Dataset used for training the model
+    :param test_data: Dataset used for testing the model
+    :param translate: ict of class indexing (Hint: usually an output of the create_csv function)
+    :return: Pandas table
+    """
 
     train_dct = data_distribution(train_data)
     test_dct = data_distribution(test_data)
@@ -80,12 +92,15 @@ def data_distribution_table(train_data, test_data, translate):
 
 
 def overview(train_data, test_data, translate, images=None, batch_size=64):
-    """Show the data distribution of dataset in a Pandas table:\n
-      - train_data: Dataset used for training the model
-      - test_data: Dataset used for testing the model
-      - translate: Dict of class indexing (Hint: usually an output of the create_csv function)
-      - images: Image iteration from DataLoader (None by default)
-      - batch_size: Number of images to show in case images is None"""
+    """
+    Show a batch of images, the data distribution and Pandas table of given datasets
+    :param train_data: Dataset used for training the model
+    :param test_data: Dataset used for testing the model
+    :param translate: Dict of class indexing (Hint: usually an output of the create_csv function)
+    :param images: Image iteration from DataLoader (None by default, will be generated automatically)
+    :param batch_size: Number of images to show in case images is None
+    :return: Pandas table
+    """
 
     if images is None:
         loader = DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)

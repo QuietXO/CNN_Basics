@@ -1,7 +1,8 @@
-__all__ = ['data', 'model', 'visual']
+__all__ = ['dataset', 'model', 'visual']
 
-from .data import create_csv
-from .data import CustomDataset
+from .dataset import create_csv
+from .dataset import get_normal
+from .dataset import CustomDataset
 
 from .model import train_model
 from .model import load_model

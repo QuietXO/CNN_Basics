@@ -7,12 +7,25 @@ import skimage
 
 # Torch libraries
 import torch
-from torch.utils.data import Dataset
+import torchvision
+from torch.utils.data import Dataset, DataLoader
 
 
 def create_csv(file_path, csv_path=None, train_csv=None, test_csv=None,
                rewrite=False, split=False, test_ratio=0.2, mul=1, mul_test=False):
-    """Create a csv file for your dataset"""
+    """
+    Create a csv file for your dataset
+    :param file_path: Sub-Folders location path (e.g. './dataset')
+    :param csv_path: Where do you want to save the .csv file (e.g. './data/dataset.csv')
+    :param train_csv: Where do you want to save the .csv train file (e.g. './data/train_dataset.csv')
+    :param test_csv: Where do you want to save the .csv test file (e.g. './data/test_dataset.csv')
+    :param rewrite: Do you want to rewrite the previous .csv file?
+    :param split: Do you want to split the dataset into training and testing data? (False by default)
+    :param test_ratio: If split is True, how much of the dataset should be used for testing? (0.2 = 20% by default)
+    :param mul: Multiply the data is your dataset (No multiplication by default)
+    :param mul_test: If split is True, do you want to multiply the test dataset as well? (False by default)
+    :return: dictionary of indexing the classes (index : class)
+    """
 
     translate = dict()                                  # Class : Number
     categories = os.listdir(file_path)                  # Load all categories
@@ -71,6 +84,74 @@ def create_csv(file_path, csv_path=None, train_csv=None, test_csv=None,
             test_f.close()                              # Close the file
 
     return translate
+
+
+def get_normal(file_path, img_h, img_w, colour='grayscale'):
+    """
+    Get the mean & std for you image dataset
+    :param file_path: Sub-Folders location path (e.g. './dataset')
+    :param img_h: Image height
+    :param img_w: Image width
+    :param colour: Colour type of dataset ('grayscale' by default)
+    :return: [mean, std]
+    """
+
+    # Base Transformation
+    if colour == 'grayscale':
+        transformer = torchvision.transforms.Compose([
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Resize((img_h, img_w)),
+            torchvision.transforms.Grayscale()
+        ])
+    else:
+        transformer = torchvision.transforms.Compose([
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Resize((img_h, img_w))
+        ])
+
+    # Create the .csv file
+    csv_path = file_path + 'TMP.csv'
+    create_csv(file_path, csv_path, rewrite=True)
+
+    # Create the Datasets
+    dataset = CustomDataset(file_path, csv_path, transform=transformer)
+    os.remove(csv_path)
+
+    # Get mean & std
+    loader = DataLoader(dataset=dataset, batch_size=1)
+    n_pixels = len(dataset) * img_h * img_w
+
+    total_sum = 0
+    for image in loader:
+        total_sum += image[0].sum()
+    mean = total_sum / n_pixels
+
+    mse_sum = 0
+    for image in loader:
+        mse_sum += ((image[0] - mean).pow(2)).sum()
+    std = torch.sqrt(mse_sum / n_pixels)
+
+    return [mean, std]
+
+
+def trans_normal(img_h, img_w, mean, std):
+    """
+    Get a normalised transformation
+    :param img_h: Image height
+    :param img_w: Image width
+    :param mean: Mean of the dataset images
+    :param std: Std of the dataset images
+    :return: normalised transformation
+    """
+    transformer = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Resize((img_h, img_w)),
+        torchvision.transforms.RandomHorizontalFlip(),
+        torchvision.transforms.RandomVerticalFlip(),
+        torchvision.transforms.Grayscale(),
+        torchvision.transforms.Normalize(mean, std)
+    ])
+    return transformer
 
 
 class CustomDataset(Dataset):

@@ -9,16 +9,19 @@ import torch.nn as nn
 # TODO: if accuracy under certain percentage repeat training until hit, if falls too low STOP
 def train_model(model, data_loader, criterion, optimizer, n_epochs, device=torch.device('cpu'),
                 print_steps=1, print_epochs=1, loss_acc=4):
-    """Load an accuracy test for a model:\n
-      - model: Model on which the test will be run
-      - data_loader: DataLoader you want to use for testing
-      - criterion: Type of loss you want to use
-      - optimizer: Type of optimization function
-      - n_epochs: Numer of epochs to be done
-      - device: Torch device on which the test will run (processor by default)
-      - print_steps: Number of printed steps per epoch (one per epoch by default)
-      - print_epochs: Print every n-th epoch (every epoch by default)
-      - loss_acc: Accuracy of the printed loss (4 decimal by default)"""
+    """
+    Start the training of the model parameters
+    :param model: Model on which the test will be run
+    :param data_loader: DataLoader you want to use for testing
+    :param criterion: Type of loss you want to use
+    :param optimizer: Type of optimization function
+    :param n_epochs: Numer of epochs to be done
+    :param device: Torch device on which the test will run (processor by default)
+    :param print_steps: Number of printed steps per epoch (one per epoch by default)
+    :param print_epochs: Print every n-th epoch (every epoch by default)
+    :param loss_acc: Accuracy of the printed loss (4 decimal by default)
+    :return: None
+    """
 
     # Variables for epoch print
     print_epochs = (n_epochs if print_epochs is None else print_epochs)
@@ -52,15 +55,18 @@ def train_model(model, data_loader, criterion, optimizer, n_epochs, device=torch
 
 def load_model(model, data_loader, classification, device=torch.device('cpu'), save=None,
                class_results=True, show_wrongs=False, n_wrongs=5):
-    """Load an accuracy test for a model:\n
-      - model: Model on which the test will be run
-      - data_loader: DataLoader you want to use for testing
-      - classification: List of classes
-      - device: Torch device on which the test will run (processor by default)
-      - save: Load model from a save file (None by default)
-      - class_results: Shows individual class accuracy stats (True by default)
-      - show_wrongs: Shows wrong prediction and the labels (False by default)
-      - n_wrongs = Number of wrong examples which will be shown (5 by default)"""
+    """
+    Load an accuracy test for a model and it's classes
+    :param model: Model on which the test will be run
+    :param data_loader: DataLoader you want to use for testing
+    :param classification: List of classes
+    :param device: Torch device on which the test will run (processor by default)
+    :param save: Load model from a save file (None by default)
+    :param class_results: Shows individual class accuracy stats (True by default)
+    :param show_wrongs: Shows wrong prediction and the labels (False by default)
+    :param n_wrongs: Number of wrong examples which will be shown (5 by default)
+    :return: Accuracy of the model on given dataset
+    """
 
     # Load model if necessary
     if save is not None and device == torch.device('cuda'):
@@ -94,7 +100,7 @@ def load_model(model, data_loader, classification, device=torch.device('cpu'), s
                 if label == pred:
                     n_class_correct[label] += 1
                 elif show_wrongs and n_wrongs > n_wrong:
-                    print(f'\nPredicted: {classification[pred]} | Real: {classification[label]}')
+                    print(f'\nClass: {classification[label]} | Predicted: {classification[pred]}')
                     visual.imshow(images[i])
                     n_wrong += 1
                 n_class_samples[label] += 1
