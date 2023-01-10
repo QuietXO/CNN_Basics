@@ -29,13 +29,15 @@ def data_distribution(dataset):
     :return: dictionary ( class index : number of samples )
     """
 
-    dct = dict()
-    for item in dataset:
-        try:
-            dct[item[1].item()] += 1
-        except KeyError:
-            dct[item[1].item()] = 1
-    return dct
+    if dataset is not None:
+        dct = dict()
+        for item in dataset:
+            try:
+                dct[item[1].item()] += 1
+            except KeyError:
+                dct[item[1].item()] = 1
+        return dct
+    return None
 
 
 def print_data_distribution(dataset, translate):
@@ -72,7 +74,7 @@ def data_distribution_table(train_data, test_data, translate):
     for key, test_value in train_dct.items():
         df.iat[idx, 0] = translate[key]
         df.iat[idx, 1] = str(test_value)
-        train_value = test_dct[key]
+        train_value = test_dct[key] if test_dct is not None else 0
         df.iat[idx, 2] = str(train_value)
         df.iat[idx, 3] = str(test_value + train_value)
         idx += 1
