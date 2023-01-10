@@ -115,7 +115,7 @@ def load_model(model, data_loader, classification, device=torch.device('cpu'), s
     return total_accuracy
 
 
-def save(model, save_path):
+def save_model(model, save_path):
     """
     Save the parameters of your model to a file
     :param model: The model you want to save

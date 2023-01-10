@@ -9,7 +9,7 @@ from .dataset import CustomDataset
 
 from .model import train_model
 from .model import load_model
-from .model import save
+from .model import save_model
 from .model import ConvNet
 
 from .visual import imshow
