@@ -115,6 +115,16 @@ def load_model(model, data_loader, classification, device=torch.device('cpu'), s
     return total_accuracy
 
 
+def save(model, save_path):
+    """
+    Save the parameters of your model to a file
+    :param model: The model you want to save
+    :param save_path: Where do you want to save the file
+    :return: None
+    """
+    torch.save(model.state_dict(), save_path)
+
+
 # TODO: Take care of padding so you can input IMG_SIZE as well
 class ConvNet(nn.Module):
     def __init__(self, colour_size, n_categories):

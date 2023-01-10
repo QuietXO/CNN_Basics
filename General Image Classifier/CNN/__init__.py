@@ -9,6 +9,7 @@ from .dataset import CustomDataset
 
 from .model import train_model
 from .model import load_model
+from .model import save
 from .model import ConvNet
 
 from .visual import imshow
@@ -25,7 +26,7 @@ def pick_device(device=None):
     - 'cuda' PyTorch will use NVIDIA GPU if possible
     - 'mps' PyTorch will use Apple Silicon ARM (M1/M2) if possible
     Hint: By adding ':n' you can choose a certain device (e.g. 'cuda:0')
-    :param device: Device name (if no input, automatic selection of a option)
+    :param device: Device name (if no input, automatic selection of an option)
     :return: torch.device('device')
     """
     if device is None:
