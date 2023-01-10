@@ -78,7 +78,7 @@ def load_model(model, data_loader, classification, device=torch.device('cpu'), s
     model.to(device)
 
     # Start Testing
-    n_wrong = 0
+    wrongs = list()
     n_classes = len(classification)
     with torch.no_grad():
         n_correct = 0
@@ -99,10 +99,10 @@ def load_model(model, data_loader, classification, device=torch.device('cpu'), s
                 pred = predicted[i]
                 if label == pred:
                     n_class_correct[label] += 1
-                elif show_wrongs and n_wrongs > n_wrong:
+                elif show_wrongs and n_wrongs > len(wrongs) and str(images[i][0][0].numpy()) not in wrongs:
+                    wrongs.append(str(images[i][0][0].numpy()))
                     print(f'\nClass: {classification[label]} | Predicted: {classification[pred]}')
                     visual.imshow(images[i])
-                    n_wrong += 1
                 n_class_samples[label] += 1
 
         total_accuracy = 100.0 * n_correct / n_samples
@@ -112,7 +112,6 @@ def load_model(model, data_loader, classification, device=torch.device('cpu'), s
             for i in range(n_classes):
                 accuracy = 100.0 * n_class_correct[i] / n_class_samples[i]
                 print(f'Accuracy of {classification[i]}: {accuracy:.2f} %')
-
     return total_accuracy
 
 
