@@ -53,7 +53,7 @@ def train_model(model, data_loader, criterion, optimizer, n_epochs, device=torch
     print('--- Training Finished ---')
 
 
-def load_model(model, data_loader, classification, device=torch.device('cpu'), save=None,
+def load_model(model, data_loader, classification, device=torch.device('cpu'), save_path=None,
                class_results=True, show_wrongs=False, n_wrongs=5):
     """
     Load an accuracy test for a model and it's classes
@@ -61,7 +61,7 @@ def load_model(model, data_loader, classification, device=torch.device('cpu'), s
     :param data_loader: DataLoader you want to use for testing
     :param classification: List of classes
     :param device: Torch device on which the test will run (processor by default)
-    :param save: Load model from a save file (None by default)
+    :param save_path: Load model from a save file (None by default)
     :param class_results: Shows individual class accuracy stats (True by default)
     :param show_wrongs: Shows wrong prediction and the labels (False by default)
     :param n_wrongs: Number of wrong examples which will be shown (5 by default)
@@ -69,12 +69,12 @@ def load_model(model, data_loader, classification, device=torch.device('cpu'), s
     """
 
     # Load model if necessary
-    if save is not None and device == torch.device('cuda'):
-        model.load_state_dict(torch.load(save, map_location='cuda'))
-    if save is not None and device == torch.device('mps'):
-        model.load_state_dict(torch.load(save, map_location='mps'))
-    if save is not None and device == torch.device('cpu'):
-        model.load_state_dict(torch.load(save, map_location='cpu'))
+    if save_path is not None and device == torch.device('cuda'):
+        model.load_state_dict(torch.load(save_path, map_location='cuda'))
+    if save_path is not None and device == torch.device('mps'):
+        model.load_state_dict(torch.load(save_path, map_location='mps'))
+    if save_path is not None and device == torch.device('cpu'):
+        model.load_state_dict(torch.load(save_path, map_location='cpu'))
     model.to(device)
 
     # Start Testing
